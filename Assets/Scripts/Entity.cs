@@ -8,4 +8,5 @@ public class Entity : MonoBehaviour
     public float Y;
     public float Xvel;
     public float Yvel;
+    public float Rotation;
 }
