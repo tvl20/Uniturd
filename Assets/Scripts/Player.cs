@@ -5,42 +5,45 @@ using UnityEngine;
 
 public class Player : Entity
 {
+    public Vector2 bulletDirection;
+
+    private Vector3 mousePosition;
     private Rigidbody2D myRigidBody;
 
     public float RoF;
     public int ShieldPower;
     public PowerUp PowerUp;
 
-    private Vector3 mousePosition;
-    private Vector3 relativePlayerLoc;
+    public Transform bullet;
 
     // Use this for initialization
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
-        speed = 4;
+        speed = 2.5f;
         mousePosition = Input.mousePosition;
         RoF = 1;
         ShieldPower = 0;
         PowerUp = PowerUp.None;
-        relativePlayerLoc = transform.position;
+        RelativeEntityLoc = transform.position;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*
-         * mouse is 0.0 bottom left corner
-         * gameObj is 0.0 center of the screen
-         */
-
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        relativePlayerLoc = myRigidBody.position;
+        RelativeEntityLoc = myRigidBody.position;
 
-        float newRotation = getNewRotation(relativePlayerLoc, mousePosition);
+        float newRotation = getNewRotation(RelativeEntityLoc, mousePosition);
         myRigidBody.MoveRotation(newRotation * -1);
         Rotation = newRotation;
+
+
+        if (Input.GetKeyUp("space"))
+        {
+            Instantiate(bullet, transform.position, transform.rotation);
+        }
     }
 
     public void FixedUpdate()
@@ -76,6 +79,10 @@ public class Player : Entity
             }
 
             myRigidBody.MovePosition(myRigidBody.position + (Vector2) movement);
+        }
+        else
+        {
+            myRigidBody.velocity = Vector2.zero;
         }
     }
 

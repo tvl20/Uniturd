@@ -6,13 +6,21 @@ public class Bullet : Entity
 {
     public bool Piercing;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private Player player;
+    private Rigidbody2D myRigidBody;
+
+    // Use this for initialization
+    void Start()
+    {
+        speed = 15f;
+        player = (Player)GameObject.Find("Player").GetComponent(typeof(Player));
+        myRigidBody = GetComponent<Rigidbody2D>();
+
+        if (player.PowerUp == PowerUp.Piercing)
+        {
+            Piercing = true;
+        }
+        
+        myRigidBody.velocity = transform.right * speed * -1;
+    }
 }
