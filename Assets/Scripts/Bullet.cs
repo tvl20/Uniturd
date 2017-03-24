@@ -23,4 +23,15 @@ public class Bullet : Entity
         
         myRigidBody.velocity = transform.right * speed * -1;
     }
+
+    void Update()
+    {
+        if (transform.position.y > 7.5f ||
+            transform.position.y < -7.5f ||
+            transform.position.x > 10f ||
+            transform.position.x < -10f)
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }
