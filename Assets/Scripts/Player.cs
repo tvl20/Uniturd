@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Player : Entity
 {
+    private Rigidbody2D myRigidBody;
+
     public float RoF;
     public int ShieldPower;
     public PowerUp PowerUp;
@@ -13,47 +15,83 @@ public class Player : Entity
     private Vector3 relativePlayerLoc;
 
     // Use this for initialization
-    void Start ()
-	{
-	    mousePosition = Input.mousePosition;
-	    RoF = 1;
-	    ShieldPower = 0;
+    void Start()
+    {
+        myRigidBody = GetComponent<Rigidbody2D>();
+        speed = 4;
+        mousePosition = Input.mousePosition;
+        RoF = 1;
+        ShieldPower = 0;
         PowerUp = PowerUp.None;
-        relativePlayerLoc = transform.position; //player position with origin in bottom left cornor
-        relativePlayerLoc.x += 512;
-        relativePlayerLoc.y += 384;
+        relativePlayerLoc = transform.position;
+
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         /*
          * mouse is 0.0 bottom left corner
          * gameObj is 0.0 center of the screen
          */
-        mousePosition = Input.mousePosition;
 
-        relativePlayerLoc = transform.position; //player position with origin in bottom left cornor
-	    relativePlayerLoc.x += 512; //half the total width
-	    relativePlayerLoc.y += 384; //half the total height
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        relativePlayerLoc = myRigidBody.position;
 
         float newRotation = getNewRotation(relativePlayerLoc, mousePosition);
-        transform.Rotate(0, 0, (newRotation - Rotation)*-1); // * -1 ohterwise its mirrored
+        myRigidBody.MoveRotation(newRotation * -1);
         Rotation = newRotation;
+    }
+
+    public void FixedUpdate()
+    {
+        //todo: make movement relative to the cursor/rotation
+        //todo: make movement relative to cursor/rotation by way of forces
+
+        if (Input.GetAxisRaw("Vertical") > 0.5 || Input.GetAxisRaw("Vertical") < -0.5 
+            || Input.GetAxisRaw("Horizontal") > 0.5 || Input.GetAxisRaw("Horizontal") < -0.5)
+        {
+            Vector3 movement = Vector3.zero;
+
+            if (Input.GetAxisRaw("Vertical") > 0.5 || Input.GetAxisRaw("Vertical") < -0.5)
+            {
+                if (mousePosition.y < transform.position.y - 1 ||
+                    mousePosition.y > transform.position.y + 1 ||
+                    mousePosition.x < transform.position.x - 1 ||
+                    mousePosition.x > transform.position.x + 1)
+                {
+                    movement += transform.right*Input.GetAxisRaw("Vertical")*speed*Time.deltaTime*-1;
+                }
+            }
+
+            if (Input.GetAxisRaw("Horizontal") > 0.5 || Input.GetAxisRaw("Horizontal") < -0.5)
+            {
+                if (mousePosition.y < transform.position.y - 1 ||
+                    mousePosition.y > transform.position.y + 1 ||
+                    mousePosition.x < transform.position.x - 1 ||
+                    mousePosition.x > transform.position.x + 1)
+                {
+                    movement += transform.up*Input.GetAxisRaw("Horizontal")*speed*Time.deltaTime*-1;
+                }
+            }
+
+            myRigidBody.MovePosition(myRigidBody.position + (Vector2) movement);
+        }
     }
 
     private float getNewRotation(Vector3 PlayerPos, Vector3 MousePos)
     {
-	    float angle = PlayerPos.z;
-	    float adjacent = 1;
-	    float opposite = 1;
-        
-	    if (PlayerPos.x > MousePos.x && PlayerPos.y < MousePos.y) //top left
+        float angle = PlayerPos.z;
+        float adjacent = 0.001f;
+        float opposite = 0.001f;
+
+        if (PlayerPos.x > MousePos.x && PlayerPos.y < MousePos.y) //top left
         {
             opposite = MousePos.y - PlayerPos.y;
             adjacent = PlayerPos.x - MousePos.x;
-	        angle = 0;
-	    }
-	    else if (PlayerPos.x < MousePos.x && PlayerPos.y < MousePos.y) //top right
+            angle = 0;
+        }
+        else if (PlayerPos.x < MousePos.x && PlayerPos.y < MousePos.y) //top right
         {
             adjacent = MousePos.y - PlayerPos.y;
             opposite = MousePos.x - PlayerPos.x;
@@ -72,20 +110,20 @@ public class Player : Entity
             angle = 270;
         }
 
-	    angle += getAngle(adjacent, opposite);
+        angle += getAngle(adjacent, opposite);
         return angle;
     }
 
     private float getAngle(float adjacent, float opposite)
     {
-        if (adjacent < 0.1f)
+        if (adjacent < 0.001f)
         {
-            adjacent = 0.25f;
+            adjacent = 0.001f;
         }
 
-        if (opposite < 0.1f)
+        if (opposite < 0.001f)
         {
-            opposite = 0.25f;
+            opposite = 0.001f;
         }
 
         double tan = Math.Atan(opposite / adjacent);
