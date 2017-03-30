@@ -72,7 +72,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   m_Points:
@@ -110,14 +110,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4179fad7a3c9c4293203db118c125e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 4
   Rotation: 0
-  HorizontalMovement: 0
   HorizontalMovementVector: {x: 0, y: 0}
   VerticalMovementVector: {x: 0, y: 0}
+  bulletDirection: {x: 0, y: 0}
   RoF: 0
   ShieldPower: 0
   PowerUp: 0
+  bullet: {fileID: 4109229517733372, guid: 18d674997f28563428accd0d5e534caf, type: 2}
 --- !u!212 &212183208733814938
 SpriteRenderer:
   m_ObjectHideFlags: 1

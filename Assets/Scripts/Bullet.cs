@@ -34,4 +34,12 @@ public class Bullet : Entity
             Destroy(this.gameObject);
         }
     }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (!Piercing)
+        {
+            Destroy(this.gameObject);
+        }
+    }
 }
