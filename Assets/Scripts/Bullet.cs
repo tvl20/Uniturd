@@ -12,7 +12,6 @@ public class Bullet : Entity
     // Use this for initialization
     void Start()
     {
-        speed = 15f;
         player = (Player)GameObject.Find("Player").GetComponent(typeof(Player));
         myRigidBody = GetComponent<Rigidbody2D>();
 

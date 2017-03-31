@@ -46,7 +46,6 @@ public class GameController : Entity // this is used in order to access the getR
         float rotation;
 
         int side = Random.Range(1, 5);
-        print(side);
 
         Vector2 spawnPos = new Vector2(0, 0);
         Vector2 targetPos = new Vector2(Random.Range(-7.5f, 7.5f), Random.Range(-10f, 10f));
@@ -71,13 +70,25 @@ public class GameController : Entity // this is used in order to access the getR
                 break;
         }
 
-        rotation = getRotation(spawnPos, targetPos);
+        Vector3 vectorToTarget = targetPos - spawnPos;
+        rotation = (Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg)-180;
 
         if (side == 2 || side == 4)
         {
-            rotation = rotation*-1;
+            rotation = rotation * -1;
         }
 
-        Instantiate(BigAstroid, new Vector3(spawnPos.x, spawnPos.y, 0f), Quaternion.Euler(0f, 0f, rotation));
+        GameObject spawnAstroid = (GameObject)Instantiate(BigAstroid, new Vector3(spawnPos.x, spawnPos.y, 0f), Quaternion.Euler(0f, 0f, rotation)).gameObject;
+
+        Astroid spawnAstroidScript = spawnAstroid.GetComponent<Astroid>();
+        spawnAstroidScript.Size = Random.Range(1, 4);
+        spawnAstroidScript.speed = 1.5f;
+        //for (int i = 0; i < spawnAstroidScript.Size; i++)
+        //{
+        //    spawnAstroidScript.speed += 0.5f;
+        //}
+
+        Rigidbody2D spawnAstroidRigidbody2D = spawnAstroid.GetComponent<Rigidbody2D>();
+        spawnAstroidRigidbody2D.velocity = spawnAstroid.transform.position * spawnAstroidScript.speed * -1;
     }
 }

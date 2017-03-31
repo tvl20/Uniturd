@@ -34,9 +34,12 @@ public class Player : Entity
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RelativeEntityLoc = myRigidBody.position;
 
-        float newRotation = getRotation(RelativeEntityLoc, mousePosition);
-        myRigidBody.MoveRotation(newRotation * -1);
-        Rotation = newRotation;
+        Vector3 vectorToTarget = mousePosition - RelativeEntityLoc;
+        float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x)*Mathf.Rad2Deg;
+        angle -= 180;
+        Quaternion newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime*5);
+
 
 
         if (Input.GetKeyUp("space"))

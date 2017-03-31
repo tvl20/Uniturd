@@ -6,14 +6,6 @@ public class Astroid : Entity
 {
     public int Size;
     private Rigidbody2D myRigidbody;
-
-	// Use this for initialization
-	void Start ()
-	{
-	    myRigidbody = GetComponent<Rigidbody2D>();
-
-        myRigidbody.velocity = transform.right * speed * -1;
-    }
 	
 	// Update is called once per frame
 	void FixedUpdate ()
@@ -32,6 +24,29 @@ public class Astroid : Entity
         if (col.gameObject.name == "Bullet(Clone)")
         {
             print("A bullet has hit an astroid");
+
+            if (Size > 0)
+            {
+                int rnd = Random.Range(1, 3);
+                for (int i = 0; i < rnd; i++)
+                {
+                    float rotation = Random.Range(0f, 360f);
+                    GameObject spawnAstroid = (GameObject)Instantiate(this.transform, this.transform.position, Quaternion.Euler(0f, 0f, rotation)).gameObject;
+                    spawnAstroid.transform.localScale += new Vector3(-0.1f, -0.1f, 0);
+
+                    Astroid spawnAstroidScript = spawnAstroid.GetComponent<Astroid>();
+                    spawnAstroidScript.Size = Size - 1;
+                    spawnAstroidScript.speed = 1.5f;
+                    //for (int i = 0; i < spawnAstroidScript.Size; i++)
+                    //{
+                    //    spawnAstroidScript.speed += 0.5f;
+                    //}
+
+                    Rigidbody2D spawnAstroidRigidbody2D = spawnAstroid.GetComponent<Rigidbody2D>();
+                    spawnAstroidRigidbody2D.velocity = spawnAstroid.transform.position * spawnAstroidScript.speed * -1;
+                }
+            }
+
             Destroy(this.gameObject);
         }
     }
